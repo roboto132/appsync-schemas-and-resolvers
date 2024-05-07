@@ -1,0 +1,108 @@
+{
+  "Comment": "A description of my state machine",
+  "StartAt": "Parallel State",
+  "States": {
+    "Parallel State": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "Lambda Invoke 1",
+          "States": {
+            "Lambda Invoke 1": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "ResultPath": "$.resultFromFunction1",
+              "Parameters": {
+                "Payload": {
+                  "cpgId.$": "$.cpgId",
+                  "countryId.$": "$.countryId",
+                  "organizationId.$": "$.organizationId",
+                  "transactionId.$": "$.transactionId",
+                  "b2bSession.$": "$.b2bSession",
+                  "clientId.$": "$.clientId",
+                  "limit.$": "$.limit",
+                  "offset.$": "$.offset"
+                },
+                "FunctionName": "arn:aws:lambda:us-east-1:395542348363:function:my-step-functions-project-dev-stepOne:$LATEST"
+              },
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "Lambda.ServiceException",
+                    "Lambda.AWSLambdaException",
+                    "Lambda.SdkClientException",
+                    "Lambda.TooManyRequestsException"
+                  ],
+                  "IntervalSeconds": 1,
+                  "MaxAttempts": 3,
+                  "BackoffRate": 2
+                }
+              ],
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "Lambda Invoke 2",
+          "States": {
+            "Lambda Invoke 2": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "ResultPath": "$.resultFromFunction2",
+              "Parameters": {
+                "Payload": {
+                  "cpgId.$": "$.cpgId",
+                  "countryId.$": "$.countryId",
+                  "organizationId.$": "$.organizationId",
+                  "clientId.$": "$.clientId",
+                  "transactionId.$": "$.transactionId",
+                  "b2bSession.$": "$.b2bSession"
+                },
+                "FunctionName": "arn:aws:lambda:us-east-1:395542348363:function:my-step-functions-project-dev-StepTwo:$LATEST"
+              },
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "Lambda.ServiceException",
+                    "Lambda.AWSLambdaException",
+                    "Lambda.SdkClientException",
+                    "Lambda.TooManyRequestsException"
+                  ],
+                  "IntervalSeconds": 1,
+                  "MaxAttempts": 3,
+                  "BackoffRate": 2
+                }
+              ],
+              "End": true
+            }
+          }
+        }
+      ],
+      "Next": "Lambda Invoke 3",
+      "ResultPath": "$.testing"
+    },
+    "Lambda Invoke 3": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "ResultPath": "$.resultFromFunction3",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:us-east-1:395542348363:function:my-step-functions-project-dev-processStepFunctionData:$LATEST"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "End": true,
+      "InputPath": "$.testing"
+    }
+  }
+}

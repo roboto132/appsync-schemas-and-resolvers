@@ -1,0 +1,537 @@
+schema {
+  query: Query
+}
+
+interface Response {
+  code: Int!
+  httpStatus: Int!
+  ok: Boolean!
+}
+
+#   Product attribute details
+type Attribute {
+  attributeId: String
+  cpgId: String
+  cpgValue: String
+  mnemonic: String
+  registerDate: String
+  registeredBy: String
+  state: String
+  value: String
+}
+
+#   Define the Auth type with access and refresh tokens
+type Auth {
+  accessToken: String
+  refreshToken: String
+}
+
+#   Banner information for promotional campaigns
+type Banners {
+  bannerCampaignId: String
+  bannerId: String
+  bannerName: String
+  image: String
+  position: Int
+}
+
+type Bucket {
+  count: Int
+  id: String
+  label: String
+  mnemonic: String
+  value: String
+}
+
+#   Represents a group of buckets for a specific filter type, as returned by the lambda.
+type BucketGroup {
+  buckets: [Bucket!]!
+  #   Array of Bucket objects detailing individual filter options.
+  label: String!
+}
+
+#   createPartialOrder data 
+type CalculatedItems {
+  categoryId: String
+  deliveryType: String
+  erpMeasureUnitId: String
+  erpProductId: String
+  image: String
+  maxOrderQuantity: Int
+  maxOrderQuantityBottle: Int
+  maxOrderQuantityBox: Int
+  name: String
+  orderPosition: Int
+  package: String
+  portfolioPriceId: Int
+  price: Price
+  productGroup: AWSJSON
+  productGroupDiscountIdList: [Int]
+  productGroupName: String
+  productId: Int
+  proportionalQuantity: Int
+  quantity: Int
+  sector: AWSJSON
+  segmentId: Int
+  size: String
+  subUnit: AWSJSON
+  totalProportionalQuantity: Int
+  totals: AWSJSON
+}
+
+type CalculatedItemsPivot {
+  calculatedItems: [CalculatedItems]
+}
+
+type CategoriesResponse {
+  categories: [Category]
+}
+
+#   Information about categories
+type Category {
+  _id: String
+  categoryIcon: String
+  categoryName: String
+  cpgNames: [String!]
+  productsCount: Int
+}
+
+#   Define the Client type nested under User
+type Client {
+  active: String
+  address: String
+  businessName: String
+  cellphone: String
+  clientId: SetOperationDatesResponse
+  cpgClientCode: String
+  cpgId: String
+  email: String
+  frozenLimit: Int
+  id: String
+  noFrozenLimit: Int
+  registerBy: String
+  registerDate: String
+  routeId: String
+  rut: String
+  updateDate: String
+  updatedBy: String
+}
+
+type DeliveryDatesResponse {
+  deliveryDate: String
+  deliveryType: String
+}
+
+#   the response structure for discount and porducts
+type DiscoutAndProductsResponse implements Response {
+  code: Int!
+  data: [Product]
+  httpStatus: Int!
+  ok: Boolean!
+  pagination: Pagination
+}
+
+#   getSurvey response 
+type Emojis {
+  image: String
+  name: String
+  positive: Boolean
+  value: Int
+}
+
+#   Object containing BucketGroup types for each filter category, structured according to lambda response.
+type Facets {
+  #   Group of buckets representing flavors.
+  BRANDS: BucketGroup
+  FLAVORS: BucketGroup
+  #   Group of buckets representing returnability options.
+  PACKAGES: BucketGroup
+  #   Group of buckets representing sizes.
+  RETURNABILITIES: BucketGroup
+  #   Group of buckets representing brands.
+  SIZES: BucketGroup
+}
+
+#   Filters
+# The response type for the getFilters query, matching the structure returned by the b2b-mobile-getFilters lambda.
+type FilterResponse {
+  filters: Filters
+}
+
+#   Represents the filter structure returned by the lambda, detailing available filters and facets.
+type Filters {
+  count: Int!
+  #   List of filter types available (FLAVORS, BRANDS, etc.).
+  facets: Facets
+  #   Total count of results with the current filters.
+  filter: [String!]!
+}
+
+#   Response structure for getting client's visit plan
+type GetClientVisitPlanResponse implements Response {
+  code: Int!
+  data: [VisitPlan!]!
+  httpStatus: Int!
+  ok: Boolean!
+  pagination: Pagination!
+}
+
+type GetInvoiceDeadlineDataResponse {
+  deadlineTime: String!
+  timezone: String!
+}
+
+type GetInvoiceDeadlineResponse implements Response {
+  code: Int!
+  data: GetInvoiceDeadlineDataResponse
+  httpStatus: Int!
+  ok: Boolean!
+}
+
+#   Response structure for initializing a user session
+type InitUserSessionResponse implements Response {
+  code: Int!
+  httpStatus: Int!
+  ok: Boolean!
+}
+
+type ItemCreated {
+  countryId: String
+  cpgId: String
+  discounts: Int
+  erpMeasureUnitId: String
+  finalPrice: Int
+  finalTaxes: Int
+  listPrice: Int
+  orderId: String
+  orderItemId: Int
+  organizationId: String
+  others: Int
+  productId: Int
+  quantity: Int
+  shippingPrice: Int
+  taxes: Int
+  totalDiscounts: Int
+  totalFinalPrice: Int
+  totalFinalTaxes: Int
+  totalListPrice: Int
+  totalOthers: Int
+  totalShippingPrice: Int
+  totalTaxes: Int
+}
+
+type ItemResponse {
+  deliveryType: String
+  portfolioPriceId: Int
+  productId: Int!
+  quantity: Int!
+}
+
+#   The actual data returned by getLoginMobile containing Auth and User types
+type LoginData {
+  auth: Auth
+  user: User
+}
+
+#   The response structure for getLoginMobile query
+type LoginResponse {
+  code: Int
+  data: LoginData
+  httpStatus: Int
+  ok: Boolean
+}
+
+#   Pagination details for responses with multiple items
+type Pagination {
+  count: Int!
+  currentpage: Int!
+  limit: Int!
+  offset: Int!
+}
+
+#   The response structure for createPartialOrder query
+type PartialOrderResponse {
+  code: Int!
+  data: CalculatedItemsPivot
+  httpStatus: Int!
+  ok: Boolean!
+}
+
+type Payment {
+  allowPurchaseWithoutCreditBalance: Boolean
+  erpPaymentMethodId: String
+  lockNextPaymentMethodUntilBalanceIsReached: Boolean
+  name: String
+  order: Int
+  paymentMethodId: Int
+  showCreditBalance: Boolean
+}
+
+type PaymentHandlerResult {
+  checkNonExistantCredit: [String]
+  processedList: [ProcessedList]
+}
+
+#   Price information for a product
+type Price {
+  discountAmounts: [Float]
+  discountFixes: [Float]
+  discountPercentages: [Float]
+  discounts: Float
+  finalPrice: Float
+  finalTaxes: Float
+  listPrice: Float
+  others: Float
+  portfolioPriceId: Int
+  shippingPrice: Float
+  taxes: Float
+  validityFrom: String
+  validityTo: String
+}
+
+type ProcessedList {
+  available: Int
+  newAvailable: Int
+  segmentId: Int
+  segmentName: String
+  spent: Int
+  status: String
+}
+
+#   Detailed information about a product
+type Product {
+  attributes: [Attribute]
+  availability: Boolean
+  categoryId: String
+  countryId: String
+  cpgClientId: Int
+  cpgId: String
+  cpgProductId: Int
+  deliveryType: String
+  erpProductId: String
+  erpUnitMeasureId: String
+  id: String
+  image: String
+  isSuggestedProduct: Boolean
+  locked: Boolean
+  name: String
+  organizationId: String
+  price: Price
+  productGroup: String
+  productGroupDiscountIdList: [Int]
+  returnability: Boolean
+  sectorId: Int
+  sectorName: String
+  subUnidDescription: String
+  subUnidId: Int
+  subUnidQuantity: Int
+  suggestedProductQuantity: Int
+  unitMeasure: String
+}
+
+#   The response structure for product queries
+type ProductsResponse {
+  currentPage: Int
+  products: [Product]
+  totalPages: Int
+  totalResults: Int
+}
+
+#   Root Query type defining the API operations available
+type Query {
+  confirmOrderService(clientId: Int!, orderId: String!, paymentMethod: String!, purchaseOrderNumber: String!): confirmOrderServiceResponse
+  #   Create Partial Order Service
+  createPartialOrder(clientId: Int!, items: [Item], orderId: String, sourceChannel: String): PartialOrderResponse
+  #   Fetches banners based on client ID for promotional display
+  getBannersByClient(erpClientId: String): [Banners]
+  #   Retrieves categories by clientId
+  getCategories(B2BInfoInput: B2BInfoInput, clientId: Int!): CategoriesResponse
+  getClientCreditService(clientId: Int!, limit: Int, offset: Int): getClientCreditServiceResponse
+  #   Obtains the visit plan for a client, including visit dates and types
+  getClientVisitPlan(B2BInfoInput: B2BInfoInput, clientId: Int!, limit: Int, offset: Int, visitType: String!): GetClientVisitPlanResponse
+  #   Retrieves products eligible for discounts for a specific client
+  getDiscountProducts(clientId: Int!, limit: Int, offset: Int, text: String!): DiscoutAndProductsResponse
+  getDraftOrderService(clientId: Int!): getDraftOrderServiceResponse
+  getFilters(clientId: Int!): FilterResponse
+  getInvoiceDeadline(clientId: Int!, deliveryDate: String!): GetInvoiceDeadlineResponse
+  getLoginMobile(B2BInfoInput: B2BInfoInput, email: String!, password: String!): LoginResponse @aws_cognito_user_pools
+  getPaymentMethods(clientId: Int!): getPaymentMethodsResponse
+  getPortfolio(B2BInfoInput: B2BInfoInput, categoryId: String, clientId: Int!, erpProductId: String, isSuggested: Boolean, limit: Int, offset: Int, productId: Int, searchText: String): ProductsResponse
+  #   Retrieves products suggested for a specific client
+  getSuggestedProducts(clientId: Int!, limit: Int, offset: Int): ProductsResponse
+  getSurvey(clientId: Int!): getSurveyResponse
+  #   Initializes a user session with the provided session and client information
+  # clientId: Int!, B2BInfoInput: B2BInfoInput
+  initUserSession(clientId: Int!): InitUserSessionResponse
+  orderStatus(clientId: Int!, items: [Item], orderId: Int!): orderStatusResponse
+  #   Set Operation dates on B2B 
+  # clientId: Int!, B2BInfoInput: B2BInfoInput, setOperationDateInput: SetOperationDatesInput
+  setOperationDates(clientId: Int, setOperationDateInput: SetOperationDatesInput): SetOperationDatesResponse
+}
+
+type Questions {
+  _id: String
+  active: Boolean
+  emojis: [Emojis]
+  positive: Boolean
+  value: String
+}
+
+type Segment {
+  name: String
+  segmentId: Int
+}
+
+#   Response structure for set operation dates
+type SetOperationDatesResponse implements Response {
+  code: Int!
+  httpStatus: Int!
+  ok: Boolean!
+}
+
+#   Define the User type with its associated fields
+type User {
+  active: Boolean
+  avatar: String
+  cellphone: String
+  clients: [Client]
+  email: String
+  id: String
+  lastName: String
+  name: String
+  profileId: String
+  registerDate: String
+  roleId: String
+  routeId: Int
+  updateDate: String
+}
+
+#   Information about a planned visit
+type VisitPlan {
+  visitDate: String!
+  visitType: String!
+}
+
+#   Response structure for ConfirmOrderService
+type confirmOrderServiceResponse implements Response {
+  code: Int!
+  data: confirmOrderServiceResponseData
+  httpStatus: Int!
+  ok: Boolean!
+}
+
+type confirmOrderServiceResponseData {
+  itemsCreated: [ItemCreated]
+  orderId: String
+}
+
+type getClientCreditServiceDataResponse {
+  Segment: Segment
+  available: Int
+  clientId: Int
+  countryId: String
+  cpgId: String
+  creditLimit: Int
+  currencyId: String
+  organizationId: String
+  spentCredit: Int
+}
+
+type getClientCreditServiceResponse implements Response {
+  code: Int!
+  data: [getClientCreditServiceDataResponse]
+  httpStatus: Int!
+  ok: Boolean!
+}
+
+type getDraftOrderServiceDataResponse {
+  clientId: Int
+  countryId: String
+  cpgId: String
+  deliveryDates: DeliveryDatesResponse
+  isDraft: Boolean
+  items: [ItemResponse]
+  orderId: Int
+  organizationId: String
+}
+
+#   Response structure for getDraftOrderService
+type getDraftOrderServiceResponse implements Response {
+  code: Int!
+  data: [getDraftOrderServiceDataResponse]
+  httpStatus: Int!
+  ok: Boolean!
+}
+
+type getPaymentMethodsDataResponse {
+  clientId: Int
+  payments: [Payment]
+}
+
+#   Response structure for getPaymentMethods
+type getPaymentMethodsResponse implements Response {
+  code: Int!
+  data: getPaymentMethodsDataResponse
+  httpStatus: Int!
+  ok: Boolean!
+}
+
+type getSurveyResponse {
+  active: Boolean
+  characterLimit: Int
+  id: String
+  name: String
+  placeHolder: String
+  questionDetail: String
+  #   orderId: String
+  # transport: String
+  # truck: String
+  questions: [Questions]
+  title: String
+  titlePlaceHolder: String
+}
+
+type orderStatusDataResponse {
+  paymentHandlerResult: PaymentHandlerResult
+}
+
+#   Response structure for orderStatus
+type orderStatusResponse implements Response {
+  code: Int!
+  data: orderStatusDataResponse
+  httpStatus: Int!
+  ok: Boolean!
+}
+
+#   Common input parameters for several operations involving client and session data
+input B2BInfoInput {
+  b2bSession: B2bSession!
+  countryId: String!
+  cpgId: String!
+  organizationId: String!
+  transactionId: String!
+}
+
+#   Authorization token for B2B session
+input B2bSession {
+  Authorization: String!
+}
+
+#   Input for getDraftOrderService
+input DeliveryDate {
+  deliveryDate: String!
+  deliveryType: String!
+}
+
+input Item {
+  deliveryType: String
+  portfolioPriceId: Int
+  productId: Int!
+  quantity: Int!
+}
+
+#   Information to set operation date
+input SetOperationDatesInput {
+  deliverydate: String!
+  visitType: String!
+}
